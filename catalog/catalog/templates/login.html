@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+    </script>
+
+    <script src="//apis.google.com/js/platform.js?onload=start"> </script>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+    <title>login</title>
+    <!-- http://www.cssmatic.com/gradient-generator#'\-moz\-linear\-gradient\%28left\%2C\%20rgba\%28248\%2C80\%2C50\%2C1\%29\%200\%25\%2C\%20rgba\%28241\%2C111\%2C92\%2C1\%29\%2050\%25\%2C\%20rgba\%28246\%2C41\%2C12\%2C1\%29\%2051\%25\%2C\%20rgba\%28240\%2C47\%2C23\%2C1\%29\%2071\%25\%2C\%20rgba\%28231\%2C56\%2C39\%2C1\%29\%20100\%25\%29\%3B' -->
+    <!-- http://jsfiddle.net/8fDte/ -->
+    <style>
+        html {
+            height: 100%;
+        }
+
+        .MyGradientClass
+        {
+            background: rgba(255,255,255,1);
+            background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(88%, rgba(254,238,195,1)), color-stop(94%, rgba(255,210,87,1)), color-stop(100%, rgba(255,255,255,1)));
+            background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            background: -o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=0 );
+        }
+
+    </style>
+
+
+<body class="MyGradientClass">
+<div class="container-fluid">
+    <div style="height: 100%;">
+        <!-- ******************* Analog Input Calibration ************************ -->
+        <div class="tab-pane panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Embedded World Catalog
+                </h3>
+            </div>
+            <div class="col-sm-4 col-md-4 panel-body">
+                <form class="form-horizontal">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">login</h4>
+                        </div>
+                        <!-- GOOGLE PLUS SIGN IN-->
+
+                        <div  id="signInButton" style="margin-top: 8px; margin-left: 8px">
+                          <span class="g-signin"
+                                data-scope="openid email"
+                                data-clientid="952665023829-m3e7c1lhe57vecvo96eiuhq90be65cr2.apps.googleusercontent.com"
+                                data-redirecturi="postmessage"
+                                data-accesstype="offline"
+                                data-cookiepolicy="single_host_origin"
+                                data-callback="signInCallback"
+                                data-approvalprompt="force">
+                          </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-4 col-md-4 panel-body">
+                <form class="form-horizontal">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">User Message</h4>
+                        </div>
+                        <div id="result"></div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+    <script src="{{ url_for('static', filename='jquery-1.11.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+    <script>
+    function signInCallback(authResult)
+    {
+        //If code field exists, authentication gas gone well
+        if(authResult['code']){
+            $('#signInButton').attr('style','display:none')
+            /*Send the one-time-use code to the server, if the server
+            * responds, write a 'login successful' message to the web
+            * page and then redirect back to the main restaurants page*/
+            $.ajax({
+                type: 'POST',
+                url: '/gconnect?state={{STATE}}',
+                processData: false,
+                contentType: 'application/octet-stream; charset=utf-8',
+                data: authResult['code'],
+                success: function(result){
+                    if(result){
+                        $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...')
+                        setTimeout(function(){
+                            window.location.href = "{{ url_for('index') }}"
+                        }, 4000);
+                    }
+                    else if (authResult['error'])
+                    {
+                        console.log('There was an error: ' + authResult['error']);
+                    }
+                    else
+                    {
+                        $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+                    }
+                }
+            });
+         }
+    }
+</script>
+</body>
+</html>

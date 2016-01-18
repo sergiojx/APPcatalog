@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Catalog</title>
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <style>
+        html {
+            height: 100%;
+        }
+        .MyGradientClass
+        {
+            background: rgba(255,255,255,1);
+            background: -moz-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(255,255,255,1)), color-stop(88%, rgba(254,238,195,1)), color-stop(94%, rgba(255,210,87,1)), color-stop(100%, rgba(255,255,255,1)));
+            background: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            background: -o-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            background: linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(254,238,195,1) 88%, rgba(255,210,87,1) 94%, rgba(255,255,255,1) 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#ffffff', GradientType=0 );
+
+        }
+    </style>
+</head>
+<body class="MyGradientClass">
+<header>
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <img class="hidden-xs" style="height:50px; padding: 7px 15px 7px 15px; float: left;"
+                     src="{{ url_for('static', filename='linux-embedded.jpg') }}">
+                <a href="#" class="navbar-brand" style="padding: 15px 15px 7px 15px; height: 50px; vertical-align: middle;" id="title-brand-navbar">
+                    EMBEDDED WORLD CATALOG
+                </a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    {% if username %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Catalog <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('newCategory',user_id=userid)}}" style="color:burlywood"><strong><span id="id_newcaty">New Category </span></strong></a></li>
+                            <li><a href="{{ url_for('newItem',user_id=userid) }}" style="color:burlywood"><strong><span id="id_item">New Item </span></strong></a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div>
+                            <p style="margin-top: 19px; margin-right: 12px;">{{username}}</p>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Catalog <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{ url_for('showLogin') }}" style="color:burlywood"><strong><span id="id_newcaty">New Category </span></strong></a></li>
+                            <li><a href="{{ url_for('showLogin') }}" style="color:burlywood"><strong><span id="id_item">New Item </span></strong></a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                </ul>
+                {% if username %}
+                <div>
+                    <button type="button" class="btn btn-small btn-warning" style="margin-top: 8px" id="id_logoutbutton"><a href="{{url_for('gdisconnect')}}" style="color:ghostwhite">logout</a></button>
+                </div>
+                {% else %}
+                <div>
+                    <button type="button" class="btn btn-small btn-warning" style="margin-top: 8px" id="id_loginbutton"><a href="{{ url_for('showLogin') }}" style="color:ghostwhite">login</a></button>
+                </div>
+                {% endif %}
+
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</header>
+<div class="container">
+    <div class="col-sm-4 col-md-4">
+        <div class="panel panel-primary" style="padding: 0px;">
+            <div class="panel-heading">
+                <h3 class="panel-title glyphicon ">CATEGORY LIST</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills  nav-stacked" style="padding: 0px; width:100%;" id="id_categorylst">
+                    {% for i in catLst %}
+                        <li class="glyphicon" id="catid-{{i.id}}"><a  href="#" data-toggle="tab">{{i.name}}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-8 col-md-8" style="height: 100%;">
+        <div class="tab-content" style="height: 100%;" id="izinetmngr-container">
+            <div class="tab-pane active panel panel-primary" id="izinetmngr-info-tab">
+                <div class="panel-heading">
+                    <h3 class="panel-title glyphicon "><span id="id_ItemLstTittle"></span></h3>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <div class="col-sm-10">
+                                <ul class="nav nav-pills  nav-stacked" style="padding: 0px; width:100%;" id="id_itemlst">
+
+
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class = 'flash'>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+
+        <ul>
+            {% for message in messages %}
+            <li style="color:burlywood"> <strong> {{ message }} </strong> </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+
+    </div>
+</div>>
+
+
+<script src="{{ url_for('static', filename='jquery-1.11.3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='bootstrap.min.js') }}"></script>
+<script type="text/javascript" charset="utf-8">
+
+
+    /*This is executed ionce DOM is built*/
+    $(document).ready(function () {
+        /*Once DOM is built, Item list frame's tittel is updated,
+        recent item list is requested to server*/
+        $('#id_ItemLstTittle').text('RECENT ITEMS')
+        $.get("{{ url_for('recentItemJSON') }}", function (data, textStatus, jqXHR) {
+
+            var resentItems = data.resentItems;
+
+            for(var i = 0; i < resentItems.length; i++) {
+                var obj = resentItems[i];
+                var listr = '<li class="glyphicon"><a href="/item/' + obj.id + '/info/"><span class="tab"><strong>' + obj.name  + '</strong> [' + obj.category + ']</span></a></li>'
+                $('#id_itemlst').append(listr)
+            }
+
+        }).fail(function () {
+            alert("Oops, server has not sent responded");
+        });
+    });
+    /*Add category item list on click request and associated handler*/
+    {% for i in catLst %}
+        $('#catid-{{i.id}}').click(function(){
+            $.get("/category/{{i.id}}/itemlst/JSON/", function (data, textStatus, jqXHR){
+
+                //Update list item frame title anf fill in it with selected categoty's itm list
+                $('#id_ItemLstTittle').text($('#catid-{{i.id}} a').html())
+                $('#id_itemlst').empty()
+                var categoryItemLst = data.categoryItemLst;
+                for(var i = 0; i < categoryItemLst.length; i++) {
+                    var obj = categoryItemLst[i];
+                    var listr = '<li class="glyphicon"><a href="/item/' + obj.id + '/info/"><span class="tab"><strong>' + obj.name  + '</strong> [' + obj.category + ']</span></a></li>'
+                    $('#id_itemlst').append(listr)
+                }
+            })
+        })
+    {% endfor %}
+
+</script>
+
+</body>
+</html>
